@@ -1,2 +1,9 @@
 # soil
-Basic implementation of algebra, signal processing and quantum mechanics by using C/C++
+
+Implementation of some basic math by using C/C++
+
+## Major abilities
+
+* algebra
+* signal processing
+* quantum mechanics
