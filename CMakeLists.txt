@@ -16,5 +16,13 @@ include_directories(BEFORE
     third_party
 )
 
-add_executable(test_version test/test_version.cpp)
-target_link_libraries(test_version ${PROJECT_NAME})
+option(BUILD_TEST "Whether to build test executives" ON)
+
+if(BUILD_TEST)
+    file(GLOB tests "test/*.cpp")
+    foreach(test_file ${tests})
+        cmake_path(GET test_file STEM test_name)
+        add_executable(${test_name} ${test_file})
+        target_link_libraries(${test_name} ${PROJECT_NAME})
+    endforeach()
+endif()
