@@ -5,9 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 project(soil VERSION 0.0.1)
 
-set(src_files
-    src/version.cpp
-)
+file(GLOB src_files "src/*.cpp")
 
 add_library(${PROJECT_NAME} SHARED ${src_files})
 
