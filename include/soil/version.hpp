@@ -1,5 +1,5 @@
-#ifndef SOIL_VERSION_H
-#define SOIL_VERSION_H
+#ifndef SOIL_VERSION_HPP
+#define SOIL_VERSION_HPP
 
 #include <string>
 
@@ -11,5 +11,4 @@ public:
     static std::string get();
 };
 
-
-#endif // SOIL_VERSION_H
+#endif // SOIL_VERSION_HPP
