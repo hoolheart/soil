@@ -9,8 +9,11 @@ file(GLOB src_files "src/*.cpp")
 
 add_library(${PROJECT_NAME} SHARED ${src_files})
 
+include(GenerateExportHeader)
+generate_export_header(${PROJECT_NAME})
+
 configure_file(include/config.h.in config.h)
-include_directories(BEFORE 
+include_directories(BEFORE
     ${PROJECT_BINARY_DIR}
     include
     third_party

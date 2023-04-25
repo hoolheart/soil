@@ -2,8 +2,10 @@
 #define SOIL_VERSION_HPP
 
 #include <string>
+#include "soil_export.h"
 
-class SoilVersion {
+/** version information of soil */
+class SOIL_EXPORT SoilVersion {
 public:
     static int Major();
     static int Minor();

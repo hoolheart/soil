@@ -50,6 +50,18 @@ Eigen::VectorXd Wavement::values(const std::string &key) const {
     return Eigen::VectorXd();
 }
 
+std::optional<Wavement::Point> Wavement::point(int index) const
+{
+    if ((index>=0) && (index<priv->referee.size())) {
+        Point p{priv->referee[index], std::unordered_map<std::string, double>()};
+        for (auto it = priv->values.begin(); it != priv->values.end(); ++it) {
+            p.values[it->first] = it->second[index];
+        }
+        return p;
+    }
+    return std::nullopt;
+}
+
 Signal::Signal(const std::string &name) {
     priv = new SignalPriv{name, std::unordered_map<std::string, double>()};
 }
@@ -67,12 +79,12 @@ std::vector<std::string> Signal::parameters() const {
     return keys_;
 }
 
-double Signal::getParameter(const std::string &para_name) const {
+double Signal::getParameter(const std::string &para_name, double def) const {
     auto it = priv->parameters.find(para_name);
     if (it != priv->parameters.end()) {
         return it->second;
     }
-    return 0.0;
+    return def;
 }
 
 void Signal::setParameter(const std::string &para_name, double para_value) {
