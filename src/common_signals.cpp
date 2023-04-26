@@ -2,7 +2,7 @@
 #include "signal_process_p.hpp"
 
 FunctionalSignal::FunctionalSignal(
-    const std::unordered_map<std::string, FUNC_TYPE> &functions)
+    const std::unordered_map<std::string, SIG_FUNC> &functions)
     : Signal("functional") {
     priv = new FunctionalSignalPriv;
     for (auto [key, func] : functions) {
