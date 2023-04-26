@@ -1,0 +1,6 @@
+BasedOnStyle: LLVM
+Standard: Latest
+IndentWidth: 4
+BreakBeforeBraces: Attach
+PointerAlignment: Right
+IndentCaseLabels: false

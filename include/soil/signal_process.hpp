@@ -9,7 +9,6 @@
 #include "Eigen/Dense"
 
 class WavementPriv;
-class SignalPriv;
 
 /**
  * @brief Wavement composed by a referee and any number of values
@@ -75,6 +74,8 @@ private:
     WavementPriv *priv;
 };
 
+class SignalPriv;
+
 /**
  * @brief Abstract signal interface
  *
@@ -90,6 +91,13 @@ private:
  * 3. most important function of a signal is to generate a wavement by giving a
  *    referee, such function is performed by `get` method which should be
  *    implemented in derived class.
+ *
+ * The necessary implemetations in derived class:
+ * 1. constructor using protected `Signal(name)` to define name, and using
+ *    `prepareParameter` to define parameters;
+ * 2. `keys` method to specify keys of values in generated wavement;
+ * 3. `get` method to achieve wavement generation;
+ * 4. `checkParameter` method to guard parameter setting.
  */
 class SOIL_EXPORT Signal
 {
@@ -138,7 +146,8 @@ protected:
      * @param [in] para_value the value prepared to set to the parameter
      * @return whether the setting can be performed
      */
-    virtual bool checkParameter(const std::string &para_name, double para_value) = 0;
+    virtual bool checkParameter(const std::string &para_name,
+                                double para_value) const = 0;
 
 private:
     SignalPriv *priv;
