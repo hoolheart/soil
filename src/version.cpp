@@ -1,10 +1,12 @@
 #include "soil/version.hpp"
 #include "config.h"
 
-int SoilVersion::Major() { return PROJ_VER_MAJOR; }
+using namespace soil;
 
-int SoilVersion::Minor() { return PROJ_VER_MINOR; }
+int Version::Major() { return PROJ_VER_MAJOR; }
 
-int SoilVersion::Patch() { return PROJ_VER_PATCH; }
+int Version::Minor() { return PROJ_VER_MINOR; }
 
-std::string SoilVersion::get() { return std::string(PROJ_VER); }
+int Version::Patch() { return PROJ_VER_PATCH; }
+
+std::string Version::get() { return std::string(PROJ_VER); }

@@ -2,6 +2,6 @@
 #include "soil/version.hpp"
 
 int main() {
-    std::cout << "Hello Soil V" << SoilVersion::get() << std::endl;
+    std::cout << "Hello Soil V" << soil::Version::get() << std::endl;
     return 0;
 }

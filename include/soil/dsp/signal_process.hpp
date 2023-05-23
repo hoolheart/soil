@@ -8,6 +8,9 @@
 #include "soil_export.h"
 #include "Eigen/Dense"
 
+namespace soil {
+namespace dsp {
+
 class WavementPriv;
 
 /**
@@ -17,8 +20,7 @@ class WavementPriv;
  * The values can contain any number of columns, each has a key and a vector.
  * The size of referee must be the same with the size of every column in values.
  */
-class SOIL_EXPORT Wavement
-{
+class SOIL_EXPORT Wavement {
 public:
     /** Constructor with empty referee */
     explicit Wavement();
@@ -99,8 +101,7 @@ class SignalPriv;
  * 3. `get` method to achieve wavement generation;
  * 4. `checkParameter` method to guard parameter setting.
  */
-class SOIL_EXPORT Signal
-{
+class SOIL_EXPORT Signal {
 public:
     /** Get signal name */
     std::string name() const;
@@ -152,5 +153,8 @@ protected:
 private:
     SignalPriv *priv;
 };
+
+} // namespace dsp
+} // namespace soil
 
 #endif // SOIL_SIGNAL_HPP

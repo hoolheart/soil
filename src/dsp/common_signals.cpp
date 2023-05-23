@@ -1,5 +1,7 @@
-#include "soil/common_signals.hpp"
+#include "soil/dsp/common_signals.hpp"
 #include "signal_process_p.hpp"
+
+using namespace soil::dsp;
 
 FunctionalSignal::FunctionalSignal(
     const std::unordered_map<std::string, SIG_FUNC> &functions)

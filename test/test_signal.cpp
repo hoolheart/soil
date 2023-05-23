@@ -1,8 +1,10 @@
 #include <iostream>
 #define _USE_MATH_DEFINES
-#include "soil/common_signals.hpp"
-#include "soil/signal_process.hpp"
+#include "soil/dsp/common_signals.hpp"
+#include "soil/dsp/signal_process.hpp"
 #include <math.h>
+
+using namespace soil::dsp;
 
 const double TWO_PI = M_PI * 2.0;
 

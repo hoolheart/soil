@@ -1,5 +1,7 @@
-#include "soil/signal_process.hpp"
+#include "soil/dsp/signal_process.hpp"
 #include "signal_process_p.hpp"
+
+using namespace soil::dsp;
 
 Wavement::Wavement() {
     priv = new WavementPriv{};
