@@ -1,8 +1,8 @@
 #include <iostream>
 #define _USE_MATH_DEFINES
+#include <math.h>
 #include "soil/dsp/common_signals.hpp"
 #include "soil/dsp/signal_process.hpp"
-#include <math.h>
 
 using namespace soil::dsp;
 
@@ -150,6 +150,25 @@ int main() {
     assert(w_linear.keys()[0] == "amp");
     auto col_linear = w_linear.values("amp");
     for (auto val : col_linear) {
+        std::cout << " " << val;
+    }
+    std::cout << std::endl << std::endl;
+
+    std::cout << "Test sine signal" << std::endl;
+    SineSignal sine_sig(0.1, 0.0, 2.0, 0.1);
+    parameters = sine_sig.parameters();
+    std::cout << "There is/are " << parameters.size()
+              << " parameters:" << std::endl;
+    for (auto para : parameters) {
+        std::cout << "- " << para << ": " << sine_sig.getParameter(para)
+                  << std::endl;
+    }
+    auto w_sine = sine_sig.get(ts);
+    std::cout << "Generate a wavement:";
+    assert(w_sine.keys().size() == 1);
+    assert(w_sine.keys()[0] == "amp");
+    auto col_sine = w_sine.values("amp");
+    for (auto val : col_sine) {
         std::cout << " " << val;
     }
     std::cout << std::endl << std::endl;

@@ -1,6 +1,3 @@
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <functional>
 #include "soil_export.h"
 #include "soil/dsp/signal_process.hpp"
 
@@ -71,7 +68,7 @@ protected:
  * - coeff, coefficient factor
  * - offset, offset at referee 0
  *
- * Note: amp = coeff * referee + offset
+ * @note amp = coeff * referee + offset
  */
 class SOIL_EXPORT LinearSignal : public Signal {
 public:
@@ -82,6 +79,54 @@ public:
      * @param [in] offset default offset at referee 0
      */
     explicit LinearSignal(double coeff, double offset);
+
+    std::vector<std::string> keys() const;
+    Wavement get(const Eigen::VectorXd &referee) const;
+
+protected:
+    bool checkParameter(const std::string &para_name, double para_value) const;
+};
+
+/**
+ * @brief Abstract periodical siganl with 'cycle' parameter, positive value
+ * @note Sub classes should call `PeriodicalSignal::checkParameter` at the end
+ *       of implemented `checkParameter` method
+ */
+class SOIL_EXPORT PeriodicalSignal : public Signal {
+protected:
+    /**
+     * @brief Construct a new Periodical Signal object
+     *
+     * @param [in] name signal name, transferred to Signal::Signal
+     * @param [in] cycle default cycle value
+     */
+    explicit PeriodicalSignal(const std::string &name, double cycle);
+    virtual bool checkParameter(const std::string &para_name,
+                                double para_value) const;
+};
+
+/**
+ * @brief Signal which is sine function of referee, subclass of PeriodicalSignal
+ *
+ * 3 additional parameters:
+ * - phase, sine phase in radian
+ * - ac_amp, maximum amplitude of AC part
+ * - dc_offset, DC offset of output
+ *
+ * @note amp = ac_amp * sin((2.0 * pi * referee) / cycle + phase) + dc_offset
+ */
+class SOIL_EXPORT SineSignal : public PeriodicalSignal {
+public:
+    /**
+     * @brief Construct a new Sine Signal object
+     *
+     * @param [in] cycle default periodical cycle, positive
+     * @param [in] phase default sine phase
+     * @param [in] ac_amp default amplitude of AC part
+     * @param [in] dc_offset default DC offset
+     */
+    explicit SineSignal(double cycle, double phase = 0.0, double ac_amp = 1.0,
+                        double dc_offset = 0.0);
 
     std::vector<std::string> keys() const;
     Wavement get(const Eigen::VectorXd &referee) const;

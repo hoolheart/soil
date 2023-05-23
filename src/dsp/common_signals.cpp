@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include "soil/dsp/common_signals.hpp"
 #include "signal_process_p.hpp"
 
@@ -89,4 +91,51 @@ bool LinearSignal::checkParameter(const std::string &para_name,
         return true;
     }
     return false;
+}
+
+PeriodicalSignal::PeriodicalSignal(const std::string &name, double cycle)
+    : Signal(name) {
+    prepareParameter("cycle", ((cycle > 0.0) ? cycle : 1.0));
+}
+
+bool PeriodicalSignal::checkParameter(const std::string &para_name,
+                                      double para_value) const {
+    if (para_name == "cycle") {
+        return para_value > 0.0;
+    }
+    return false;
+}
+
+SineSignal::SineSignal(double cycle, double phase, double ac_amp,
+                       double dc_offset)
+    : PeriodicalSignal("sine", cycle) {
+    prepareParameter("phase", phase);
+    prepareParameter("ac_amp", ac_amp);
+    prepareParameter("dc_offset", dc_offset);
+}
+
+std::vector<std::string> SineSignal::keys() const {
+    return {"amp"};
+}
+
+Wavement SineSignal::get(const Eigen::VectorXd &referee) const {
+    Wavement w(referee);
+    double omega = 2.0 * M_PI / getParameter("cycle"),
+           phase = getParameter("phase"), A = getParameter("ac_amp"),
+           offset = getParameter("dc_offset");
+    Eigen::VectorXd values = referee;
+    for (double &value: values) {
+        value = A * sin(omega * value + phase) + offset;
+    }
+    w.setValues("amp", values);
+    return w;
+}
+
+bool SineSignal::checkParameter(const std::string &para_name,
+                                double para_value) const {
+    if ((para_name == "phase") || (para_name == "ac_amp") ||
+        (para_name == "dc_offset")) {
+        return true;
+    }
+    return PeriodicalSignal::checkParameter(para_name, para_value);
 }
