@@ -7,7 +7,7 @@ project(soil VERSION 0.0.1)
 
 file(GLOB src_files
     "src/*.cpp"
-    "src/dsp/*.cpp"
+    "src/signal/*.cpp"
     "src/geo/*.cpp"
 )
 

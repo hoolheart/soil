@@ -1,8 +1,8 @@
 #include "soil_export.h"
-#include "soil/dsp/signal_process.hpp"
+#include "soil/signal/base.hpp"
 
 namespace soil {
-namespace dsp {
+namespace signal {
 
 class FunctionalSignalPriv;
 
@@ -135,5 +135,5 @@ protected:
     bool checkParameter(const std::string &para_name, double para_value) const;
 };
 
-} // namespace dsp
+} // namespace signal
 } // namespace soil

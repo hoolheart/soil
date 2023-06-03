@@ -7,7 +7,7 @@
 #include "Eigen/Dense"
 
 namespace soil {
-namespace dsp {
+namespace signal {
 
 struct WavementPriv {
     Eigen::VectorXd referee;
@@ -23,7 +23,7 @@ struct FunctionalSignalPriv {
     std::unordered_map<std::string, std::function<double(double)> > functions;
 };
 
-} // namespace dsp
+} // namespace signal
 } // namespace soil
 
 #endif // SOIL_SIGNAL_PROCESS_PRIV_HPP

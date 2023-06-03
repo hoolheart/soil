@@ -9,7 +9,7 @@
 #include "Eigen/Dense"
 
 namespace soil {
-namespace dsp {
+namespace signal {
 
 class WavementPriv;
 
@@ -154,7 +154,7 @@ private:
     SignalPriv *priv;
 };
 
-} // namespace dsp
+} // namespace signal
 } // namespace soil
 
 #endif // SOIL_SIGNAL_HPP
