@@ -1,15 +1,15 @@
 #include <iostream>
 #define _USE_MATH_DEFINES
-#include <math.h>
-#include "soil/signal/common_signals.hpp"
 #include "soil/signal/base.hpp"
+#include "soil/signal/common_signals.hpp"
+#include <math.h>
 
 using namespace soil::signal;
 
 const double TWO_PI = M_PI * 2.0;
 
 class MySineSignal : public Signal {
-  public:
+public:
     explicit MySineSignal(double amp = 1.0, double freq = 50.0,
                           double phase = 0.0)
         : Signal("my_sine") {
@@ -39,7 +39,7 @@ class MySineSignal : public Signal {
         return w;
     }
 
-  protected:
+protected:
     bool checkParameter(const std::string &para_name, double para_value) const {
         if ((para_name == "amp") || (para_name == "freq")) {
             return para_value > 0.0;
@@ -50,8 +50,77 @@ class MySineSignal : public Signal {
     }
 };
 
-int main() {
+class MyRectWindow : public PulseSignal {
+public:
+    explicit MyRectWindow(double begin = 0.0, double duration = 1.0,
+                          double amp = 1.0)
+        : PulseSignal("my_rect_window", begin, duration) {
+        prepareParameter("amp", amp);
+    }
 
+    std::vector<std::string> keys() const { return {"amp"}; }
+
+    Wavement get(const Eigen::VectorXd &referee) const {
+        Wavement w(referee);
+        Eigen::VectorXd amps = referee;
+        double amp = getParameter("amp"), begin = getParameter("begin"),
+               end = begin + getParameter("duration");
+        for (auto &value : amps) {
+            if ((value >= begin) && (value <= end)) {
+                value = amp;
+            }
+            else {
+                value = 0.0;
+            }
+        }
+        w.setValues("amp", amps);
+        return w;
+    }
+
+protected:
+    bool checkParameter(const std::string &para_name, double para_value) const {
+        if (para_name == "amp") {
+            return true;
+        }
+        return PulseSignal::checkParameter(para_name, para_value);
+    }
+};
+
+void print_parameters(const Signal &signal) {
+    auto parameters = signal.parameters();
+    size_t cnt = parameters.size();
+    if (cnt > 1) {
+        std::cout << "There are " << cnt << " parameters" << std::endl;
+    }
+    else if (cnt > 0) {
+        std::cout << "There is 1 parameter" << std::endl;
+    }
+    else {
+        return;
+    }
+    for (const auto &key: parameters) {
+        std::cout << "  - " << key << ": " << signal.getParameter(key) << std::endl;
+    }
+}
+
+void test_wavement(const Signal &signal, const Eigen::VectorXd &ts,
+                   const std::vector<std::string> &expected) {
+    auto wave = signal.get(ts);
+    auto keys = wave.keys();
+    assert(keys.size() == expected.size());
+    std::cout << "Generate a wavement:" << std::endl;
+    for (auto key: expected) {
+        assert(std::find(keys.begin(), keys.end(), key) != keys.end());
+        auto col = wave.values(key);
+        std::cout << "  - " << key << ": ";
+        for (auto val : col) {
+            std::cout << val << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+int main() {
     std::cout << "Test of signal process" << std::endl;
 
     MySineSignal signal;
@@ -63,13 +132,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    auto parameters = signal.parameters();
-    std::cout << "There is/are " << parameters.size()
-              << " parameters:" << std::endl;
-    for (auto para : parameters) {
-        std::cout << "- " << para << ": " << signal.getParameter(para)
-                  << std::endl;
-    }
+    print_parameters(signal);
     std::cout << std::endl;
 
     signal.setParameter("freq", 10.0);
@@ -107,17 +170,7 @@ int main() {
     FunctionalSignal func_sig({{"linear", [](double t) { return t + 0.1; }},
                                {"square", [](double t) { return t * t; }}});
     Eigen::VectorXd ts_func{{0.1}, {0.2}, {1.1}, {1.2}};
-    auto w_func = func_sig.get(ts_func);
-    std::cout << "Generate a wavement:" << std::endl;
-    auto keys_func = w_func.keys();
-    for (auto key : keys_func) {
-        std::cout << "- " << key << ": ";
-        auto col = w_func.values(key);
-        for (auto val : col) {
-            std::cout << val << " ";
-        }
-        std::cout << std::endl;
-    }
+    test_wavement(func_sig, ts_func, {"linear", "square"});
     std::cout << std::endl;
 
     std::cout << "Test fixed signal" << std::endl;
@@ -127,15 +180,8 @@ int main() {
     fix_sig.setParameter("level", 0.75);
     std::cout << "Change level to " << fix_sig.getParameter("level")
               << std::endl;
-    auto w_fix = fix_sig.get(ts_func);
-    std::cout << "Generate a wavement:";
-    assert(w_fix.keys().size() == 1);
-    assert(w_fix.keys()[0] == "amp");
-    auto col_fix = w_fix.values("amp");
-    for (auto val : col_fix) {
-        std::cout << " " << val;
-    }
-    std::cout << std::endl << std::endl;
+    test_wavement(fix_sig, ts_func, {"amp"});
+    std::cout << std::endl;
 
     std::cout << "Test linear signal" << std::endl;
     LinearSignal linear_sig(2.0, 0.1);
@@ -144,34 +190,20 @@ int main() {
     linear_sig.setParameter("coeff", 0.5);
     std::cout << "Change coeff to " << linear_sig.getParameter("coeff")
               << std::endl;
-    auto w_linear = linear_sig.get(ts_func);
-    std::cout << "Generate a wavement:";
-    assert(w_linear.keys().size() == 1);
-    assert(w_linear.keys()[0] == "amp");
-    auto col_linear = w_linear.values("amp");
-    for (auto val : col_linear) {
-        std::cout << " " << val;
-    }
-    std::cout << std::endl << std::endl;
+    test_wavement(linear_sig, ts_func, {"amp"});
+    std::cout << std::endl;
 
     std::cout << "Test sine signal" << std::endl;
     SineSignal sine_sig(0.1, 0.0, 2.0, 0.1);
-    parameters = sine_sig.parameters();
-    std::cout << "There is/are " << parameters.size()
-              << " parameters:" << std::endl;
-    for (auto para : parameters) {
-        std::cout << "- " << para << ": " << sine_sig.getParameter(para)
-                  << std::endl;
-    }
-    auto w_sine = sine_sig.get(ts);
-    std::cout << "Generate a wavement:";
-    assert(w_sine.keys().size() == 1);
-    assert(w_sine.keys()[0] == "amp");
-    auto col_sine = w_sine.values("amp");
-    for (auto val : col_sine) {
-        std::cout << " " << val;
-    }
-    std::cout << std::endl << std::endl;
+    print_parameters(sine_sig);
+    test_wavement(sine_sig, ts, {"amp"});
+
+    std::cout << "Test my rectangle window based on PulseSignal" << std::endl;
+    MyRectWindow my_rect_win(0.5, 1.0, 0.7);
+    my_rect_win.setParameter("begin", 0.15);
+    print_parameters(my_rect_win);
+    test_wavement(my_rect_win, ts_func, {"amp"});
+    std::cout << std::endl;
 
     return 0;
 }

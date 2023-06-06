@@ -88,7 +88,7 @@ protected:
 };
 
 /**
- * @brief Abstract periodical siganl with 'cycle' parameter, positive value
+ * @brief Abstract periodical signal with 'cycle' parameter
  * @note Sub classes should call `PeriodicalSignal::checkParameter` at the end
  *       of implemented `checkParameter` method
  */
@@ -133,6 +133,30 @@ public:
 
 protected:
     bool checkParameter(const std::string &para_name, double para_value) const;
+};
+
+/**
+ * @brief Abstract pulse signal with 'begin' and 'duration' parameters
+ *
+ * 'begin' parameter can be any value, 'duration' parameter must be positive,
+ * their units are both seconds.
+ *
+ * @note Sub classes should call `PulseSignal::checkParameter` at the end
+ *       of implemented `checkParameter` method
+ */
+class SOIL_EXPORT PulseSignal : public Signal {
+protected:
+    /**
+     * @brief Construct a new Pulse Signal object
+     *
+     * @param [in] name signal name, transferred to Signal::Signal
+     * @param [in] begin beginning time of pulse
+     * @param [in] duration time duration of pulse
+     */
+    explicit PulseSignal(const std::string &name,
+                         double begin, double duration);
+    virtual bool checkParameter(const std::string &para_name,
+                              double para_value) const;
 };
 
 } // namespace signal

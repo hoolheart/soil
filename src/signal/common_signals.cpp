@@ -37,18 +37,16 @@ Wavement FunctionalSignal::get(const Eigen::VectorXd &referee) const {
     return w;
 }
 
-bool FunctionalSignal::checkParameter(
-    const std::string &para_name, double para_value) const {
+bool FunctionalSignal::checkParameter(const std::string &para_name,
+                                      double para_value) const {
     return false;
 }
 
-FixedSignal::FixedSignal(double level): Signal("fixed") {
+FixedSignal::FixedSignal(double level) : Signal("fixed") {
     prepareParameter("level", level);
 }
 
-std::vector<std::string> FixedSignal::keys() const {
-    return {"amp"};
-}
+std::vector<std::string> FixedSignal::keys() const { return {"amp"}; }
 
 Wavement FixedSignal::get(const Eigen::VectorXd &referee) const {
     Wavement w(referee);
@@ -57,8 +55,8 @@ Wavement FixedSignal::get(const Eigen::VectorXd &referee) const {
     return w;
 }
 
-bool FixedSignal::checkParameter(
-    const std::string &para_name, double para_value) const {
+bool FixedSignal::checkParameter(const std::string &para_name,
+                                 double para_value) const {
     if (para_name == "level") {
         return true;
     }
@@ -70,9 +68,7 @@ LinearSignal::LinearSignal(double coeff, double offset) : Signal("linear") {
     prepareParameter("offset", offset);
 }
 
-std::vector<std::string> LinearSignal::keys() const {
-    return {"amp"};
-}
+std::vector<std::string> LinearSignal::keys() const { return {"amp"}; }
 
 Wavement LinearSignal::get(const Eigen::VectorXd &referee) const {
     Wavement w(referee);
@@ -114,9 +110,7 @@ SineSignal::SineSignal(double cycle, double phase, double ac_amp,
     prepareParameter("dc_offset", dc_offset);
 }
 
-std::vector<std::string> SineSignal::keys() const {
-    return {"amp"};
-}
+std::vector<std::string> SineSignal::keys() const { return {"amp"}; }
 
 Wavement SineSignal::get(const Eigen::VectorXd &referee) const {
     Wavement w(referee);
@@ -124,7 +118,7 @@ Wavement SineSignal::get(const Eigen::VectorXd &referee) const {
            phase = getParameter("phase"), A = getParameter("ac_amp"),
            offset = getParameter("dc_offset");
     Eigen::VectorXd values = referee;
-    for (double &value: values) {
+    for (double &value : values) {
         value = A * sin(omega * value + phase) + offset;
     }
     w.setValues("amp", values);
@@ -138,4 +132,21 @@ bool SineSignal::checkParameter(const std::string &para_name,
         return true;
     }
     return PeriodicalSignal::checkParameter(para_name, para_value);
+}
+
+PulseSignal::PulseSignal(const std::string &name, double begin, double duration)
+    : Signal(name) {
+    prepareParameter("begin", begin);
+    prepareParameter("duration", ((duration > 0.0) ? duration : 1.0));
+}
+
+bool PulseSignal::checkParameter(const std::string &para_name,
+                                 double para_value) const {
+    if (para_name == "duration") {
+        return para_value > 0.0;
+    }
+    else if (para_name == "begin") {
+        return true;
+    }
+    return false;
 }
