@@ -1,9 +1,15 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <functional>
+#include <unordered_map>
 #include "soil/signal/common_signals.hpp"
-#include "signal_process_p.hpp"
 
-using namespace soil::signal;
+namespace soil {
+namespace signal {
+
+struct FunctionalSignalPriv {
+    std::unordered_map<std::string, std::function<double(double)>> functions;
+};
 
 FunctionalSignal::FunctionalSignal(
     const std::unordered_map<std::string, SIG_FUNC> &functions)
@@ -25,10 +31,10 @@ std::vector<std::string> FunctionalSignal::keys() const {
     return keys;
 }
 
-Wavement FunctionalSignal::get(const Eigen::VectorXd &referee) const {
+Wavement FunctionalSignal::get(const Sequence &referee) const {
     Wavement w(referee);
     for (auto [key, func] : priv->functions) {
-        Eigen::VectorXd values = referee;
+        Sequence values = referee;
         for (double &val : values) {
             val = func(val);
         }
@@ -48,10 +54,9 @@ FixedSignal::FixedSignal(double level) : Signal("fixed") {
 
 std::vector<std::string> FixedSignal::keys() const { return {"amp"}; }
 
-Wavement FixedSignal::get(const Eigen::VectorXd &referee) const {
+Wavement FixedSignal::get(const Sequence &referee) const {
     Wavement w(referee);
-    w.setValues("amp",
-                Eigen::VectorXd::Ones(referee.size()) * getParameter("level"));
+    w.setValues("amp", Sequence::Ones(referee.size()) * getParameter("level"));
     return w;
 }
 
@@ -70,10 +75,10 @@ LinearSignal::LinearSignal(double coeff, double offset) : Signal("linear") {
 
 std::vector<std::string> LinearSignal::keys() const { return {"amp"}; }
 
-Wavement LinearSignal::get(const Eigen::VectorXd &referee) const {
+Wavement LinearSignal::get(const Sequence &referee) const {
     Wavement w(referee);
     double coeff = getParameter("coeff"), offset = getParameter("offset");
-    Eigen::VectorXd values = referee;
+    Sequence values = referee;
     for (double &value : values) {
         value = value * coeff + offset;
     }
@@ -112,12 +117,12 @@ SineSignal::SineSignal(double cycle, double phase, double ac_amp,
 
 std::vector<std::string> SineSignal::keys() const { return {"amp"}; }
 
-Wavement SineSignal::get(const Eigen::VectorXd &referee) const {
+Wavement SineSignal::get(const Sequence &referee) const {
     Wavement w(referee);
     double omega = 2.0 * M_PI / getParameter("cycle"),
            phase = getParameter("phase"), A = getParameter("ac_amp"),
            offset = getParameter("dc_offset");
-    Eigen::VectorXd values = referee;
+    Sequence values = referee;
     for (double &value : values) {
         value = A * sin(omega * value + phase) + offset;
     }
@@ -144,9 +149,11 @@ bool PulseSignal::checkParameter(const std::string &para_name,
                                  double para_value) const {
     if (para_name == "duration") {
         return para_value > 0.0;
-    }
-    else if (para_name == "begin") {
+    } else if (para_name == "begin") {
         return true;
     }
     return false;
 }
+
+} // namespace signal
+} // namespace soil

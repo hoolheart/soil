@@ -11,6 +11,9 @@
 namespace soil {
 namespace signal {
 
+/** referee and value sequence, using Eigen double vector */
+using Sequence = Eigen::VectorXd;
+
 class WavementPriv;
 
 /**
@@ -25,21 +28,21 @@ public:
     /** Constructor with empty referee */
     explicit Wavement();
     /** Constructor with given referee */
-    explicit Wavement(const Eigen::VectorXd &referee);
+    explicit Wavement(const Sequence &referee);
 
     /**
      * @brief Set referee of wavement, it would clear values as well
      *
      * @param [in] referee referee vector
      */
-    void setReferee(const Eigen::VectorXd &referee);
+    void setReferee(const Sequence &referee);
     /**
      * @brief Add a specific value column
      *
      * @param [in] key column key
      * @param [in] values column vector
      */
-    void setValues(const std::string &key, const Eigen::VectorXd &values);
+    void setValues(const std::string &key, const Sequence &values);
 
     /** Get count of point, a.k.a. size of referee or any column of values*/
     int point_count() const;
@@ -47,7 +50,7 @@ public:
     int value_count() const;
 
     /** Get referee vector */
-    Eigen::VectorXd referee() const;
+    Sequence referee() const;
     /** Get keys of all columns in values */
     std::vector<std::string> keys() const;
     /**
@@ -56,7 +59,7 @@ public:
      * @param [in] key column key
      * @return column vector, empty vector if `key` non-exists
      */
-    Eigen::VectorXd values(const std::string &key) const;
+    Sequence values(const std::string &key) const;
 
     /** Information of a single point in wavement */
     struct Point {
@@ -127,7 +130,7 @@ public:
     /** Get keys of all columns */
     virtual std::vector<std::string> keys() const = 0;
     /** Generate a wavement according to given referee */
-    virtual Wavement get(const Eigen::VectorXd &referee) const = 0;
+    virtual Wavement get(const Sequence &referee) const = 0;
 
 protected:
     /** Constructor with name assigning */

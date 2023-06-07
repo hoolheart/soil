@@ -30,7 +30,7 @@ public:
         const std::unordered_map<std::string, SIG_FUNC> &functions);
 
     std::vector<std::string> keys() const;
-    Wavement get(const Eigen::VectorXd &referee) const;
+    Wavement get(const Sequence &referee) const;
 
 protected:
     bool checkParameter(const std::string &para_name, double para_value) const;
@@ -55,7 +55,7 @@ public:
     explicit FixedSignal(double level);
 
     std::vector<std::string> keys() const;
-    Wavement get(const Eigen::VectorXd &referee) const;
+    Wavement get(const Sequence &referee) const;
 
 protected:
     bool checkParameter(const std::string &para_name, double para_value) const;
@@ -81,7 +81,7 @@ public:
     explicit LinearSignal(double coeff, double offset);
 
     std::vector<std::string> keys() const;
-    Wavement get(const Eigen::VectorXd &referee) const;
+    Wavement get(const Sequence &referee) const;
 
 protected:
     bool checkParameter(const std::string &para_name, double para_value) const;
@@ -129,7 +129,7 @@ public:
                         double dc_offset = 0.0);
 
     std::vector<std::string> keys() const;
-    Wavement get(const Eigen::VectorXd &referee) const;
+    Wavement get(const Sequence &referee) const;
 
 protected:
     bool checkParameter(const std::string &para_name, double para_value) const;
