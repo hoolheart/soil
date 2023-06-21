@@ -80,12 +80,12 @@ PeriodicalSignal::PeriodicalSignal(const std::string &name, double freq)
     prepareParameter("freq", freq);
 }
 
-SineSignal::SineSignal(double freq, double phase, double ac_amp,
-                       double dc_offset)
+SineSignal::SineSignal(double freq, double phase, double A,
+                       double offset)
     : PeriodicalSignal("sine", freq) {
     prepareParameter("phase", phase);
-    prepareParameter("ac_amp", ac_amp);
-    prepareParameter("dc_offset", dc_offset);
+    prepareParameter("A", A);
+    prepareParameter("offset", offset);
 }
 
 std::vector<std::string> SineSignal::Keys() const { return {"amp"}; }
@@ -93,8 +93,8 @@ std::vector<std::string> SineSignal::Keys() const { return {"amp"}; }
 Wavement SineSignal::get(const Sequence &referee) const {
     Wavement w(referee);
     double omega = 2.0 * M_PI * ParameterAs("freq", 50.0),
-           phase = ParameterAs("phase", 0.0), A = ParameterAs("ac_amp", 1.0),
-           offset = ParameterAs("dc_offset", 0.0);
+           phase = ParameterAs("phase", 0.0), A = ParameterAs("A", 1.0),
+           offset = ParameterAs("offset", 0.0);
     Sequence values = referee;
     for (double &value : values) {
         value = A * sin(omega * value + phase) + offset;
@@ -103,10 +103,10 @@ Wavement SineSignal::get(const Sequence &referee) const {
     return w;
 }
 
-ComplexSineSignal::ComplexSineSignal(double freq, double phase, double ac_amp)
+ComplexSineSignal::ComplexSineSignal(double freq, double phase, double A)
     : PeriodicalSignal("complex_sine", freq) {
     prepareParameter("phase", phase);
-    prepareParameter("ac_amp", ac_amp);
+    prepareParameter("A", A);
 }
 
 std::vector<std::string> ComplexSineSignal::Keys() const {
@@ -116,7 +116,7 @@ std::vector<std::string> ComplexSineSignal::Keys() const {
 Wavement ComplexSineSignal::get(const Sequence &referee) const {
     Wavement w(referee);
     double omega = 2.0 * M_PI * ParameterAs("freq", 50.0),
-           phase = ParameterAs("phase", 0.0), A = ParameterAs("ac_amp", 1.0);
+           phase = ParameterAs("phase", 0.0), A = ParameterAs("A", 1.0);
     Sequence real = referee, imag = referee;
     for (double &value: real) {
         value = A * cos(omega * value + phase);

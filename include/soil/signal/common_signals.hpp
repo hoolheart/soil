@@ -95,10 +95,10 @@ class SOIL_EXPORT PeriodicalSignal : public Signal {
  *
  * 3 additional parameters:
  * - phase, sine phase in radian
- * - ac_amp, maximum amplitude of AC part
- * - dc_offset, DC offset of output
+ * - A, maximum amplitude of AC part
+ * - offset, DC offset of output
  *
- * @note amp = ac_amp * sin(2.0 * pi * freq * referee + phase) + dc_offset
+ * @note amp = A * sin(2.0 * pi * freq * referee + phase) + offset
  */
 class SOIL_EXPORT SineSignal : public PeriodicalSignal {
   public:
@@ -107,11 +107,11 @@ class SOIL_EXPORT SineSignal : public PeriodicalSignal {
      *
      * @param [in] freq default frequency
      * @param [in] phase default sine phase
-     * @param [in] ac_amp default amplitude of AC part
-     * @param [in] dc_offset default DC offset
+     * @param [in] A default amplitude of AC part
+     * @param [in] offset default DC offset
      */
     explicit SineSignal(double freq = 50.0, double phase = 0.0,
-                        double ac_amp = 1.0, double dc_offset = 0.0);
+                        double A = 1.0, double offset = 0.0);
 
     std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
@@ -122,12 +122,12 @@ class SOIL_EXPORT SineSignal : public PeriodicalSignal {
  *
  * 2 additional parameters:
  * - phase, sine phase in radian
- * - ac_amp, maximum amplitude of AC part
+ * - A, maximum amplitude of AC part
  *
- * @note complex sine signal means A exp(j(wt+phi)),
+ * @note complex sine signal means A exp(j(2 pi f t + phase)),
  *       generating a wavement containing two columns:
- *          - real = ac_amp * cos(2.0 * pi * freq * referee + phase)
- *          - imag = ac_amp * sin(2.0 * pi * freq * referee + phase)
+ *          - real = A * cos(2.0 * pi * freq * referee + phase)
+ *          - imag = A * sin(2.0 * pi * freq * referee + phase)
  */
 class SOIL_EXPORT ComplexSineSignal : public PeriodicalSignal {
   public:
@@ -136,10 +136,10 @@ class SOIL_EXPORT ComplexSineSignal : public PeriodicalSignal {
      *
      * @param [in] freq default frequency
      * @param [in] phase default sine phase
-     * @param [in] ac_amp default amplitude
+     * @param [in] A default amplitude
      */
     explicit ComplexSineSignal(double freq = 50.0, double phase = 0.0,
-                               double ac_amp = 1.0);
+                               double A = 1.0);
 
     std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
