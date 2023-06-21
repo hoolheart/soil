@@ -78,24 +78,16 @@ class SOIL_EXPORT LinearSignal : public Signal {
     Wavement get(const Sequence &referee) const;
 };
 
-/**
- * @brief Abstract periodical signal with 'cycle' parameter
- * @note Sub classes should call `PeriodicalSignal::checkParameter` at the end
- *       of implemented `checkParameter` method
- */
+/** Abstract periodical signal with 'freq' parameter (unit: Hz) */
 class SOIL_EXPORT PeriodicalSignal : public Signal {
   protected:
     /**
      * @brief Construct a new Periodical Signal object
      *
      * @param [in] name signal name, transferred to Signal::Signal
-     * @param [in] cycle default cycle value
+     * @param [in] freq default frequency
      */
-    explicit PeriodicalSignal(const std::string &name, double cycle);
-
-    virtual bool checkParameter(const std::string &name,
-                                const std::any &current,
-                                const std::any &next) const;
+    explicit PeriodicalSignal(const std::string &name, double freq);
 };
 
 /**
@@ -106,20 +98,20 @@ class SOIL_EXPORT PeriodicalSignal : public Signal {
  * - ac_amp, maximum amplitude of AC part
  * - dc_offset, DC offset of output
  *
- * @note amp = ac_amp * sin((2.0 * pi * referee) / cycle + phase) + dc_offset
+ * @note amp = ac_amp * sin(2.0 * pi * freq * referee + phase) + dc_offset
  */
 class SOIL_EXPORT SineSignal : public PeriodicalSignal {
   public:
     /**
      * @brief Construct a new Sine Signal object
      *
-     * @param [in] cycle default periodical cycle, positive
+     * @param [in] freq default frequency
      * @param [in] phase default sine phase
      * @param [in] ac_amp default amplitude of AC part
      * @param [in] dc_offset default DC offset
      */
-    explicit SineSignal(double cycle, double phase = 0.0, double ac_amp = 1.0,
-                        double dc_offset = 0.0);
+    explicit SineSignal(double freq = 50.0, double phase = 0.0,
+                        double ac_amp = 1.0, double dc_offset = 0.0);
 
     std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
@@ -134,19 +126,19 @@ class SOIL_EXPORT SineSignal : public PeriodicalSignal {
  *
  * @note complex sine signal means A exp(j(wt+phi)),
  *       generating a wavement containing two columns:
- *          - real = ac_amp * cos((2.0 * pi * referee) / cycle + phase)
- *          - imag = ac_amp * sin((2.0 * pi * referee) / cycle + phase)
+ *          - real = ac_amp * cos(2.0 * pi * freq * referee + phase)
+ *          - imag = ac_amp * sin(2.0 * pi * freq * referee + phase)
  */
 class SOIL_EXPORT ComplexSineSignal : public PeriodicalSignal {
   public:
     /**
      * @brief Construct a new Complex Sine Signal object
      *
-     * @param [in] cycle default periodical cycle, positive
+     * @param [in] freq default frequency
      * @param [in] phase default sine phase
      * @param [in] ac_amp default amplitude
      */
-    explicit ComplexSineSignal(double cycle, double phase = 0.0,
+    explicit ComplexSineSignal(double freq = 50.0, double phase = 0.0,
                                double ac_amp = 1.0);
 
     std::vector<std::string> Keys() const;

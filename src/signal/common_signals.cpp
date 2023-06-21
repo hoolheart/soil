@@ -75,24 +75,14 @@ Wavement LinearSignal::get(const Sequence &referee) const {
     return w;
 }
 
-PeriodicalSignal::PeriodicalSignal(const std::string &name, double cycle)
+PeriodicalSignal::PeriodicalSignal(const std::string &name, double freq)
     : Signal(name) {
-    prepareParameter("cycle", ((cycle > 0.0) ? cycle : 1.0));
+    prepareParameter("freq", freq);
 }
 
-bool PeriodicalSignal::checkParameter(const std::string &name,
-                                      const std::any &current,
-                                      const std::any &next) const {
-    if (name == "cycle") {
-        return next.type() == typeid(double) &&
-               std::any_cast<double>(next) > 0.0;
-    }
-    return Signal::checkParameter(name, current, next);
-}
-
-SineSignal::SineSignal(double cycle, double phase, double ac_amp,
+SineSignal::SineSignal(double freq, double phase, double ac_amp,
                        double dc_offset)
-    : PeriodicalSignal("sine", cycle) {
+    : PeriodicalSignal("sine", freq) {
     prepareParameter("phase", phase);
     prepareParameter("ac_amp", ac_amp);
     prepareParameter("dc_offset", dc_offset);
@@ -102,7 +92,7 @@ std::vector<std::string> SineSignal::Keys() const { return {"amp"}; }
 
 Wavement SineSignal::get(const Sequence &referee) const {
     Wavement w(referee);
-    double omega = 2.0 * M_PI / ParameterAs("cycle", 1e-3),
+    double omega = 2.0 * M_PI * ParameterAs("freq", 50.0),
            phase = ParameterAs("phase", 0.0), A = ParameterAs("ac_amp", 1.0),
            offset = ParameterAs("dc_offset", 0.0);
     Sequence values = referee;
@@ -113,8 +103,8 @@ Wavement SineSignal::get(const Sequence &referee) const {
     return w;
 }
 
-ComplexSineSignal::ComplexSineSignal(double cycle, double phase, double ac_amp)
-    : PeriodicalSignal("complex_sine", cycle) {
+ComplexSineSignal::ComplexSineSignal(double freq, double phase, double ac_amp)
+    : PeriodicalSignal("complex_sine", freq) {
     prepareParameter("phase", phase);
     prepareParameter("ac_amp", ac_amp);
 }
@@ -125,7 +115,7 @@ std::vector<std::string> ComplexSineSignal::Keys() const {
 
 Wavement ComplexSineSignal::get(const Sequence &referee) const {
     Wavement w(referee);
-    double omega = 2.0 * M_PI / ParameterAs("cycle", 1e-3),
+    double omega = 2.0 * M_PI * ParameterAs("freq", 50.0),
            phase = ParameterAs("phase", 0.0), A = ParameterAs("ac_amp", 1.0);
     Sequence real = referee, imag = referee;
     for (double &value: real) {
