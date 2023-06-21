@@ -191,6 +191,13 @@ int main() {
     SineSignal sine_sig(0.1, 0.0, 2.0, 0.1);
     print_parameters(sine_sig);
     test_wavement(sine_sig, ts, {"amp"});
+    std::cout << std::endl;
+
+    std::cout << "Test complex sine signal" << std::endl;
+    ComplexSineSignal complex_sig(0.15, 0.0, 10.0);
+    print_parameters(complex_sig);
+    test_wavement(complex_sig, ts, {"real", "imag"});
+    std::cout << std::endl;
 
     std::cout << "Test my rectangle window based on PulseSignal" << std::endl;
     MyRectWindow my_rect_win(0.5, 1.0, 0.7);

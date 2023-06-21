@@ -113,6 +113,32 @@ Wavement SineSignal::get(const Sequence &referee) const {
     return w;
 }
 
+ComplexSineSignal::ComplexSineSignal(double cycle, double phase, double ac_amp)
+    : PeriodicalSignal("complex_sine", cycle) {
+    prepareParameter("phase", phase);
+    prepareParameter("ac_amp", ac_amp);
+}
+
+std::vector<std::string> ComplexSineSignal::Keys() const {
+    return {"real", "imag"};
+}
+
+Wavement ComplexSineSignal::get(const Sequence &referee) const {
+    Wavement w(referee);
+    double omega = 2.0 * M_PI / ParameterAs("cycle", 1e-3),
+           phase = ParameterAs("phase", 0.0), A = ParameterAs("ac_amp", 1.0);
+    Sequence real = referee, imag = referee;
+    for (double &value: real) {
+        value = A * cos(omega * value + phase);
+    }
+    for (double &value: imag) {
+        value = A * sin(omega * value + phase);
+    }
+    w.setValues("real", real);
+    w.setValues("imag", imag);
+    return w;
+}
+
 PulseSignal::PulseSignal(const std::string &name, double begin, double duration)
     : Signal(name) {
     prepareParameter("begin", begin);

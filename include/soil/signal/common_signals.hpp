@@ -126,6 +126,34 @@ class SOIL_EXPORT SineSignal : public PeriodicalSignal {
 };
 
 /**
+ * @brief Signal which is sine function of referee, subclass of PeriodicalSignal
+ *
+ * 2 additional parameters:
+ * - phase, sine phase in radian
+ * - ac_amp, maximum amplitude of AC part
+ *
+ * @note complex sine signal means A exp(j(wt+phi)),
+ *       generating a wavement containing two columns:
+ *          - real = ac_amp * cos((2.0 * pi * referee) / cycle + phase)
+ *          - imag = ac_amp * sin((2.0 * pi * referee) / cycle + phase)
+ */
+class SOIL_EXPORT ComplexSineSignal : public PeriodicalSignal {
+  public:
+    /**
+     * @brief Construct a new Complex Sine Signal object
+     *
+     * @param [in] cycle default periodical cycle, positive
+     * @param [in] phase default sine phase
+     * @param [in] ac_amp default amplitude
+     */
+    explicit ComplexSineSignal(double cycle, double phase = 0.0,
+                               double ac_amp = 1.0);
+
+    std::vector<std::string> Keys() const;
+    Wavement get(const Sequence &referee) const;
+};
+
+/**
  * @brief Abstract pulse signal with 'begin' and 'duration' parameters
  *
  * 'begin' parameter can be any value, 'duration' parameter must be positive,
