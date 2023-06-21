@@ -1,5 +1,7 @@
 #include <unordered_map>
-#include "soil/signal/base.hpp"
+
+#include "soil/signal/wavement.hpp"
+#include "soil/signal/signal.hpp"
 
 namespace soil {
 namespace signal {
@@ -11,7 +13,7 @@ struct WavementPriv {
 
 struct SignalPriv {
     std::string name;
-    std::unordered_map<std::string, double> parameters;
+    std::unordered_map<std::string, std::any> parameters;
 };
 
 Wavement::Wavement() { priv = new WavementPriv{}; }
@@ -33,13 +35,13 @@ void Wavement::setValues(const std::string &key, const Sequence &values) {
     }
 }
 
-int Wavement::point_count() const { return priv->referee.size(); }
+int Wavement::PointCount() const { return priv->referee.size(); }
 
-int Wavement::value_count() const { return priv->values.size(); }
+int Wavement::ValueCount() const { return priv->values.size(); }
 
-Sequence Wavement::referee() const { return priv->referee; }
+Sequence Wavement::Referee() const { return priv->referee; }
 
-std::vector<std::string> Wavement::keys() const {
+std::vector<std::string> Wavement::Keys() const {
     std::vector<std::string> keys_;
     keys_.reserve(priv->values.size());
     for (auto pair : priv->values) {
@@ -48,7 +50,7 @@ std::vector<std::string> Wavement::keys() const {
     return keys_;
 }
 
-Sequence Wavement::values(const std::string &key) const {
+Sequence Wavement::Values(const std::string &key) const {
     auto it = priv->values.find(key);
     if (it != priv->values.end()) {
         return it->second;
@@ -56,7 +58,7 @@ Sequence Wavement::values(const std::string &key) const {
     return Sequence();
 }
 
-std::optional<Wavement::Point> Wavement::point(int index) const {
+std::optional<Wavement::Point> Wavement::PointAt(int index) const {
     if ((index >= 0) && (index < priv->referee.size())) {
         Point p{priv->referee[index],
                 std::unordered_map<std::string, double>()};
@@ -69,38 +71,47 @@ std::optional<Wavement::Point> Wavement::point(int index) const {
 }
 
 Signal::Signal(const std::string &name) {
-    priv = new SignalPriv{name, std::unordered_map<std::string, double>()};
+    priv = new SignalPriv{name, std::unordered_map<std::string, std::any>()};
 }
 
-std::string Signal::name() const { return priv->name; }
+std::string Signal::Name() const { return priv->name; }
 
-std::vector<std::string> Signal::parameters() const {
+std::vector<std::string> Signal::ParameterNames() const {
     std::vector<std::string> keys_;
     keys_.reserve(priv->parameters.size());
-    for (auto pair : priv->parameters) {
+    for (const auto &pair : priv->parameters) {
         keys_.push_back(pair.first);
     }
     return keys_;
 }
 
-double Signal::getParameter(const std::string &para_name, double def) const {
-    auto it = priv->parameters.find(para_name);
+std::any Signal::Parameter(const std::string &name,
+                           const std::any &def) const {
+    auto it = priv->parameters.find(name);
     if (it != priv->parameters.end()) {
         return it->second;
     }
     return def;
 }
 
-void Signal::setParameter(const std::string &para_name, double para_value) {
-    auto it = priv->parameters.find(para_name);
+bool Signal::setParameter(const std::string &name, const std::any &value) {
+    auto it = priv->parameters.find(name);
     if ((it != priv->parameters.end()) &&
-        checkParameter(para_name, para_value)) {
-        it->second = para_value;
+        checkParameter(name, it->second, value)) {
+        it->second = value;
+        return true;
     }
+    return false;
 }
 
-void Signal::prepareParameter(const std::string &para_name, double init_value) {
-    priv->parameters.insert({para_name, init_value});
+void Signal::prepareParameter(const std::string &name,
+                              const std::any &init_value) {
+    priv->parameters.insert({name, init_value});
+}
+
+bool Signal::checkParameter(const std::string &_, const std::any &current,
+                            const std::any &next) const {
+    return current.type() == next.type();
 }
 
 } // namespace signal

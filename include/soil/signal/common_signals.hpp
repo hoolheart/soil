@@ -1,5 +1,5 @@
+#include "soil/signal/signal.hpp"
 #include "soil_export.h"
-#include "soil/signal/base.hpp"
 
 namespace soil {
 namespace signal {
@@ -17,7 +17,7 @@ class FunctionalSignalPriv;
  * No valid parameter.
  */
 class SOIL_EXPORT FunctionalSignal : public Signal {
-public:
+  public:
     /** signal function */
     typedef std::function<double(double)> SIG_FUNC;
 
@@ -29,13 +29,10 @@ public:
     explicit FunctionalSignal(
         const std::unordered_map<std::string, SIG_FUNC> &functions);
 
-    std::vector<std::string> keys() const;
+    std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
 
-protected:
-    bool checkParameter(const std::string &para_name, double para_value) const;
-
-private:
+  private:
     FunctionalSignalPriv *priv;
 };
 
@@ -43,10 +40,10 @@ private:
  * @brief Signal which holds to a fixed level
  *
  * One parameter:
- * - level, fixed level
+ * - level, fixed level, type: double
  */
 class SOIL_EXPORT FixedSignal : public Signal {
-public:
+  public:
     /**
      * @brief Construct a new Fixed Signal object
      *
@@ -54,24 +51,21 @@ public:
      */
     explicit FixedSignal(double level);
 
-    std::vector<std::string> keys() const;
+    std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
-
-protected:
-    bool checkParameter(const std::string &para_name, double para_value) const;
 };
 
 /**
  * @brief Signal which is linear function of referee
  *
  * Two parameters:
- * - coeff, coefficient factor
- * - offset, offset at referee 0
+ * - coeff, coefficient factor, type: double
+ * - offset, offset at referee 0, type: double
  *
  * @note amp = coeff * referee + offset
  */
 class SOIL_EXPORT LinearSignal : public Signal {
-public:
+  public:
     /**
      * @brief Construct a new Linear Signal object
      *
@@ -80,11 +74,8 @@ public:
      */
     explicit LinearSignal(double coeff, double offset);
 
-    std::vector<std::string> keys() const;
+    std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
-
-protected:
-    bool checkParameter(const std::string &para_name, double para_value) const;
 };
 
 /**
@@ -93,7 +84,7 @@ protected:
  *       of implemented `checkParameter` method
  */
 class SOIL_EXPORT PeriodicalSignal : public Signal {
-protected:
+  protected:
     /**
      * @brief Construct a new Periodical Signal object
      *
@@ -101,8 +92,10 @@ protected:
      * @param [in] cycle default cycle value
      */
     explicit PeriodicalSignal(const std::string &name, double cycle);
-    virtual bool checkParameter(const std::string &para_name,
-                                double para_value) const;
+
+    virtual bool checkParameter(const std::string &name,
+                                const std::any &current,
+                                const std::any &next) const;
 };
 
 /**
@@ -116,7 +109,7 @@ protected:
  * @note amp = ac_amp * sin((2.0 * pi * referee) / cycle + phase) + dc_offset
  */
 class SOIL_EXPORT SineSignal : public PeriodicalSignal {
-public:
+  public:
     /**
      * @brief Construct a new Sine Signal object
      *
@@ -128,11 +121,8 @@ public:
     explicit SineSignal(double cycle, double phase = 0.0, double ac_amp = 1.0,
                         double dc_offset = 0.0);
 
-    std::vector<std::string> keys() const;
+    std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
-
-protected:
-    bool checkParameter(const std::string &para_name, double para_value) const;
 };
 
 /**
@@ -145,7 +135,7 @@ protected:
  *       of implemented `checkParameter` method
  */
 class SOIL_EXPORT PulseSignal : public Signal {
-protected:
+  protected:
     /**
      * @brief Construct a new Pulse Signal object
      *
@@ -153,10 +143,12 @@ protected:
      * @param [in] begin beginning time of pulse
      * @param [in] duration time duration of pulse
      */
-    explicit PulseSignal(const std::string &name,
-                         double begin, double duration);
-    virtual bool checkParameter(const std::string &para_name,
-                              double para_value) const;
+    explicit PulseSignal(const std::string &name, double begin,
+                         double duration);
+
+    virtual bool checkParameter(const std::string &name,
+                                const std::any &current,
+                                const std::any &next) const;
 };
 
 } // namespace signal

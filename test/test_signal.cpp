@@ -1,8 +1,9 @@
-#include <iostream>
 #define _USE_MATH_DEFINES
-#include "soil/signal/base.hpp"
-#include "soil/signal/common_signals.hpp"
+#include <iostream>
 #include <math.h>
+
+#include "soil/signal/common_signals.hpp"
+#include "soil/signal/signal.hpp"
 
 using namespace soil::signal;
 
@@ -24,13 +25,13 @@ public:
         prepareParameter("phase", phase);
     }
 
-    std::vector<std::string> keys() const { return {"amp"}; }
+    std::vector<std::string> Keys() const { return {"amp"}; }
 
     Wavement get(const Eigen::VectorXd &referee) const {
         Wavement w(referee);
         Eigen::VectorXd amps = referee;
-        double amp = getParameter("amp"), freq = getParameter("freq"),
-               phase = getParameter("phase");
+        double amp = ParameterAs("amp", 1.0), freq = ParameterAs("freq", 50.0),
+               phase = ParameterAs("phase", 0.0);
         std::for_each(amps.begin(), amps.end(),
                       [amp, freq, phase](double &val) {
                           val = amp * sin(TWO_PI * freq * val + phase);
@@ -40,14 +41,14 @@ public:
     }
 
 protected:
-    bool checkParameter(const std::string &para_name, double para_value) const {
-        if ((para_name == "amp") || (para_name == "freq")) {
-            return para_value > 0.0;
-        } else if (para_name == "phase") {
-            return true;
+  bool checkParameter(const std::string &name, const std::any &current,
+                      const std::any &next) const {
+        if ((name == "amp") || (name == "freq")) {
+            return next.type() == typeid(double) &&
+                   std::any_cast<double>(next) > 0.0;
         }
-        return false;
-    }
+        return Signal::checkParameter(name, current, next);
+  }
 };
 
 class MyRectWindow : public PulseSignal {
@@ -58,13 +59,13 @@ public:
         prepareParameter("amp", amp);
     }
 
-    std::vector<std::string> keys() const { return {"amp"}; }
+    std::vector<std::string> Keys() const { return {"amp"}; }
 
     Wavement get(const Eigen::VectorXd &referee) const {
         Wavement w(referee);
         Eigen::VectorXd amps = referee;
-        double amp = getParameter("amp"), begin = getParameter("begin"),
-               end = begin + getParameter("duration");
+        double amp = ParameterAs("amp", 1.0), begin = ParameterAs("begin", 0.0),
+               end = begin + ParameterAs("duration", 1.0);
         for (auto &value : amps) {
             if ((value >= begin) && (value <= end)) {
                 value = amp;
@@ -76,18 +77,10 @@ public:
         w.setValues("amp", amps);
         return w;
     }
-
-protected:
-    bool checkParameter(const std::string &para_name, double para_value) const {
-        if (para_name == "amp") {
-            return true;
-        }
-        return PulseSignal::checkParameter(para_name, para_value);
-    }
 };
 
 void print_parameters(const Signal &signal) {
-    auto parameters = signal.parameters();
+    auto parameters = signal.ParameterNames();
     size_t cnt = parameters.size();
     if (cnt > 1) {
         std::cout << "There are " << cnt << " parameters" << std::endl;
@@ -99,19 +92,20 @@ void print_parameters(const Signal &signal) {
         return;
     }
     for (const auto &key: parameters) {
-        std::cout << "  - " << key << ": " << signal.getParameter(key) << std::endl;
+        std::cout << "  - " << key << ": "
+                  << signal.ParameterAs<double>(key, HUGE_VAL) << std::endl;
     }
 }
 
 void test_wavement(const Signal &signal, const Eigen::VectorXd &ts,
                    const std::vector<std::string> &expected) {
     auto wave = signal.get(ts);
-    auto keys = wave.keys();
+    auto keys = wave.Keys();
     assert(keys.size() == expected.size());
     std::cout << "Generate a wavement:" << std::endl;
     for (auto key: expected) {
         assert(std::find(keys.begin(), keys.end(), key) != keys.end());
-        auto col = wave.values(key);
+        auto col = wave.Values(key);
         std::cout << "  - " << key << ": ";
         for (auto val : col) {
             std::cout << val << " ";
@@ -124,9 +118,9 @@ int main() {
     std::cout << "Test of signal process" << std::endl;
 
     MySineSignal signal;
-    auto keys = signal.keys();
+    auto keys = signal.Keys();
     std::cout << "There is/are " << keys.size() << " columns in signal "
-              << signal.name() << ":" << std::endl;
+              << signal.Name() << ":" << std::endl;
     for (auto key : keys) {
         std::cout << "- " << key << std::endl;
     }
@@ -136,7 +130,7 @@ int main() {
     std::cout << std::endl;
 
     signal.setParameter("freq", 10.0);
-    auto freq = signal.getParameter("freq");
+    auto freq = signal.ParameterAs("freq", 50.0);
     if (fabs(freq - 10.0) < 1e-9) {
         std::cout << "Succeed to change frequency to 10Hz" << std::endl;
     } else {
@@ -148,7 +142,7 @@ int main() {
     Eigen::VectorXd ts = Eigen::VectorXd::LinSpaced(21, 0.0, 0.2);
     auto w = signal.get(ts);
     std::cout << "Generate a wavement:" << std::endl;
-    auto col = w.values(keys[0]);
+    auto col = w.Values(keys[0]);
     std::for_each(col.begin(), col.end(),
                   [](auto &val) { std::cout << val << " "; });
     std::cout << std::endl;
@@ -175,20 +169,20 @@ int main() {
 
     std::cout << "Test fixed signal" << std::endl;
     FixedSignal fix_sig(7.0);
-    std::cout << "Initial level is " << fix_sig.getParameter("level")
+    std::cout << "Initial level is " << fix_sig.ParameterAs("level", 1.0)
               << std::endl;
     fix_sig.setParameter("level", 0.75);
-    std::cout << "Change level to " << fix_sig.getParameter("level")
+    std::cout << "Change level to " << fix_sig.ParameterAs("level", 1.0)
               << std::endl;
     test_wavement(fix_sig, ts_func, {"amp"});
     std::cout << std::endl;
 
     std::cout << "Test linear signal" << std::endl;
     LinearSignal linear_sig(2.0, 0.1);
-    std::cout << "Initial coeff is " << linear_sig.getParameter("coeff")
+    std::cout << "Initial coeff is " << linear_sig.ParameterAs("coeff", 1.0)
               << std::endl;
     linear_sig.setParameter("coeff", 0.5);
-    std::cout << "Change coeff to " << linear_sig.getParameter("coeff")
+    std::cout << "Change coeff to " << linear_sig.ParameterAs("coeff", 1.0)
               << std::endl;
     test_wavement(linear_sig, ts_func, {"amp"});
     std::cout << std::endl;
