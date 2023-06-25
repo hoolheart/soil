@@ -1,11 +1,17 @@
 #define _USE_MATH_DEFINES
-#include "soil/signal/common_signals.hpp"
 #include <functional>
 #include <math.h>
 #include <unordered_map>
 
+#include "soil/signal/signal.hpp"
+#include "soil/signal/common_signals.hpp"
+
+using namespace soil::util;
+
 namespace soil {
 namespace signal {
+
+Signal::Signal(const std::string &name) : Parameterized(name) {}
 
 struct FunctionalSignalPriv {
     std::unordered_map<std::string, std::function<double(double)>> functions;

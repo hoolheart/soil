@@ -1,7 +1,6 @@
 #include <unordered_map>
 
 #include "soil/signal/wavement.hpp"
-#include "soil/signal/signal.hpp"
 
 namespace soil {
 namespace signal {
@@ -9,11 +8,6 @@ namespace signal {
 struct WavementPriv {
     Sequence referee;
     std::unordered_map<std::string, Sequence> values;
-};
-
-struct SignalPriv {
-    std::string name;
-    std::unordered_map<std::string, std::any> parameters;
 };
 
 Wavement::Wavement() { priv = new WavementPriv{}; }
@@ -68,50 +62,6 @@ std::optional<Wavement::Point> Wavement::PointAt(int index) const {
         return p;
     }
     return std::nullopt;
-}
-
-Signal::Signal(const std::string &name) {
-    priv = new SignalPriv{name, std::unordered_map<std::string, std::any>()};
-}
-
-std::string Signal::Name() const { return priv->name; }
-
-std::vector<std::string> Signal::ParameterNames() const {
-    std::vector<std::string> keys_;
-    keys_.reserve(priv->parameters.size());
-    for (const auto &pair : priv->parameters) {
-        keys_.push_back(pair.first);
-    }
-    return keys_;
-}
-
-std::any Signal::Parameter(const std::string &name,
-                           const std::any &def) const {
-    auto it = priv->parameters.find(name);
-    if (it != priv->parameters.end()) {
-        return it->second;
-    }
-    return def;
-}
-
-bool Signal::setParameter(const std::string &name, const std::any &value) {
-    auto it = priv->parameters.find(name);
-    if ((it != priv->parameters.end()) &&
-        checkParameter(name, it->second, value)) {
-        it->second = value;
-        return true;
-    }
-    return false;
-}
-
-void Signal::prepareParameter(const std::string &name,
-                              const std::any &init_value) {
-    priv->parameters.insert({name, init_value});
-}
-
-bool Signal::checkParameter(const std::string &_, const std::any &current,
-                            const std::any &next) const {
-    return current.type() == next.type();
 }
 
 } // namespace signal
