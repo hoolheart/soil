@@ -46,9 +46,9 @@ public:
     void setValues(const std::string &key, const Sequence &values);
 
     /** Get count of point, a.k.a. size of referee or any column of values*/
-    int PointCount() const;
+    Eigen::Index PointCount() const;
     /** Get count of columns in values */
-    int ValueCount() const;
+    Eigen::Index ValueCount() const;
 
     /** Get referee vector */
     Sequence Referee() const;
@@ -74,7 +74,7 @@ public:
      * @param [in] index point index
      * @return point information, nullopt if index is invalid
      */
-    std::optional<Point> PointAt(int index) const;
+    std::optional<Point> PointAt(Eigen::Index index) const;
 
 private:
     WavementPriv *priv;
