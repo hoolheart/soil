@@ -29,9 +29,9 @@ void Wavement::setValues(const std::string &key, const Sequence &values) {
     }
 }
 
-Eigen::Index Wavement::PointCount() const { return priv->referee.size(); }
+Size Wavement::PointCount() const { return priv->referee.size(); }
 
-Eigen::Index Wavement::ValueCount() const { return priv->values.size(); }
+Size Wavement::ValueCount() const { return priv->values.size(); }
 
 Sequence Wavement::Referee() const { return priv->referee; }
 
@@ -52,7 +52,7 @@ Sequence Wavement::Values(const std::string &key) const {
     return Sequence();
 }
 
-std::optional<Wavement::Point> Wavement::PointAt(Eigen::Index index) const {
+std::optional<Wavement::Point> Wavement::PointAt(Index index) const {
     if ((index >= 0) && (index < priv->referee.size())) {
         Point p{priv->referee[index],
                 std::unordered_map<std::string, double>()};

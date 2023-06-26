@@ -3,9 +3,13 @@
 
 #include "Eigen/Dense"
 #include "soil_export.h"
+#include "soil/signal/wavement.hpp"
 
 namespace soil {
 namespace signal {
+
+/** frequency characteristics, using Eigen complex vector */
+using Characteristics = Eigen::VectorXcd;
 
 class SpectrumPriv;
 
@@ -25,7 +29,7 @@ public:
      * @note Throw runtime error if point count is less than 2 or sizes of two
      *       axes don't match.
      */
-    Spectrum(const Eigen::VectorXd &freq, const Eigen::VectorXcd &values);
+    Spectrum(const Sequence &freq, const Characteristics &values);
     /**
      * @brief Construct a new Spectrum object
      *
@@ -35,7 +39,7 @@ public:
      * @note Throw runtime error if point count is less than 2 or sizes of two
      *       axes don't match.
      */
-    Spectrum(Eigen::VectorXd &&freq, Eigen::VectorXcd &&values);
+    Spectrum(Sequence &&freq, Characteristics &&values);
     /**
      * @brief Construct a new Spectrum object
      *
@@ -45,11 +49,11 @@ public:
      *
      * @note Throw runtime error if size of value axis is less than 2
      */
-    Spectrum(double f0, double f_step, const Eigen::VectorXcd &values);
+    Spectrum(double f0, double f_step, const Characteristics &values);
 
-    Eigen::Index Count() const;/**< point count */
-    const Eigen::VectorXd &Frenquencies() const;/**< frequency axis */
-    const Eigen::VectorXcd &Values() const;/**< value axis */
+    Size Count() const;                    /**< point count */
+    const Sequence &Frenquencies() const;  /**< frequency axis */
+    const Characteristics &Values() const; /**< value axis */
 
 private:
     SpectrumPriv *priv;

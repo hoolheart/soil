@@ -15,6 +15,10 @@ namespace signal {
 /** referee and value sequence, using Eigen double vector */
 using Sequence = Eigen::VectorXd;
 
+/** size and index, using Eigen index */
+using Size = Eigen::Index;
+using Index = Eigen::Index;
+
 class WavementPriv;
 
 /**
@@ -45,10 +49,10 @@ public:
      */
     void setValues(const std::string &key, const Sequence &values);
 
-    /** Get count of point, a.k.a. size of referee or any column of values*/
-    Eigen::Index PointCount() const;
+    /** Get count of point, a.k.a. size of referee or any column of values */
+    Size PointCount() const;
     /** Get count of columns in values */
-    Eigen::Index ValueCount() const;
+    Size ValueCount() const;
 
     /** Get referee vector */
     Sequence Referee() const;
@@ -74,7 +78,7 @@ public:
      * @param [in] index point index
      * @return point information, nullopt if index is invalid
      */
-    std::optional<Point> PointAt(Eigen::Index index) const;
+    std::optional<Point> PointAt(Index index) const;
 
 private:
     WavementPriv *priv;
