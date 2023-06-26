@@ -2,7 +2,7 @@
 #include <iostream>
 #include <math.h>
 
-#include "soil/signal/common_signals.hpp"
+#include "soil/signal/wavement.hpp"
 #include "soil/signal/signal.hpp"
 
 using namespace soil::signal;
@@ -41,14 +41,14 @@ public:
     }
 
 protected:
-  bool checkParameter(const std::string &name, const std::any &current,
-                      const std::any &next) const {
+    bool checkParameter(const std::string &name, const std::any &current,
+                        const std::any &next) const {
         if ((name == "amp") || (name == "freq")) {
             return next.type() == typeid(double) &&
                    std::any_cast<double>(next) > 0.0;
         }
         return Signal::checkParameter(name, current, next);
-  }
+    }
 };
 
 class MyRectWindow : public PulseSignal {
@@ -69,8 +69,7 @@ public:
         for (auto &value : amps) {
             if ((value >= begin) && (value <= end)) {
                 value = amp;
-            }
-            else {
+            } else {
                 value = 0.0;
             }
         }
@@ -84,14 +83,12 @@ void print_parameters(const Signal &signal) {
     size_t cnt = parameters.size();
     if (cnt > 1) {
         std::cout << "There are " << cnt << " parameters" << std::endl;
-    }
-    else if (cnt > 0) {
+    } else if (cnt > 0) {
         std::cout << "There is 1 parameter" << std::endl;
-    }
-    else {
+    } else {
         return;
     }
-    for (const auto &key: parameters) {
+    for (const auto &key : parameters) {
         std::cout << "  - " << key << ": "
                   << signal.ParameterAs<double>(key, HUGE_VAL) << std::endl;
     }
@@ -103,7 +100,7 @@ void test_wavement(const Signal &signal, const Eigen::VectorXd &ts,
     auto keys = wave.Keys();
     assert(keys.size() == expected.size());
     std::cout << "Generate a wavement:" << std::endl;
-    for (auto key: expected) {
+    for (auto key : expected) {
         assert(std::find(keys.begin(), keys.end(), key) != keys.end());
         auto col = wave.Values(key);
         std::cout << "  - " << key << ": ";

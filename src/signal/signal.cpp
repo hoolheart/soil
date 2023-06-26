@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 #include "soil/signal/signal.hpp"
-#include "soil/signal/common_signals.hpp"
 
 using namespace soil::util;
 
