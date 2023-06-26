@@ -32,7 +32,7 @@ class ParameterizedPriv;
  *    implementation only concerns the value types.
  */
 class SOIL_EXPORT Parameterized {
-  public:
+public:
     /** Get name */
     std::string Name() const;
 
@@ -67,7 +67,7 @@ class SOIL_EXPORT Parameterized {
      */
     bool setParameter(const std::string &name, const std::any &value);
 
-  protected:
+protected:
     /** Constructor with name assigning */
     explicit Parameterized(const std::string &name);
 
@@ -90,11 +90,11 @@ class SOIL_EXPORT Parameterized {
                                 const std::any &current,
                                 const std::any &next) const;
 
-  private:
+private:
     ParameterizedPriv *priv;
 };
 
-}
-}
+} // namespace util
+} // namespace soil
 
 #endif // SOIL_UTIL_PARAMETERIZED_HPP

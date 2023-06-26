@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+
 #include "soil_export.h"
 #include "Eigen/Dense"
 
@@ -18,11 +19,11 @@ namespace geo {
  * @tparam _dtype --- type of scalar value
  * @tparam _dimension --- space dimension, > 0
  */
-template<typename _dtype, std::size_t _dimension>
+template <typename _dtype, std::size_t _dimension>
 using Point = Eigen::Vector<_dtype, _dimension>;
 
-typedef Point<float_t, 3> FPoint3D; /**< 3D point with float precision */
-typedef Point<float_t, 2> FPoint2D; /**< 2D point with float precision */
+typedef Point<float_t, 3> FPoint3D;  /**< 3D point with float precision */
+typedef Point<float_t, 2> FPoint2D;  /**< 2D point with float precision */
 typedef Point<double_t, 3> DPoint3D; /**< 3D point with double precision */
 typedef Point<double_t, 2> DPoint2D; /**< 2D point with double precision */
 
@@ -55,7 +56,7 @@ Point<_dtype, _dimension> from_vector(const std::vector<_dtype> &vec) {
     Point<_dtype, _dimension> point;
     auto itp = point.begin();
     auto itv = vec.begin();
-    for (; (itp!=point.end()) && (itv!=vec.end()); ++itp, ++itv) {
+    for (; (itp != point.end()) && (itv != vec.end()); ++itp, ++itv) {
         *itp = *itv;
     }
     return point;
@@ -73,7 +74,7 @@ Point<_dtype1, _dimension> as(const Point<_dtype0, _dimension> &from) {
     Point<_dtype1, _dimension> to;
     auto itf = from.begin();
     auto itt = to.begin();
-    for (; (itf!=from.end()) && (itt!=to.end()); ++itf, ++itt) {
+    for (; (itf != from.end()) && (itt != to.end()); ++itf, ++itt) {
         *itt = _dtype1(*itf);
     }
     return to;
@@ -89,7 +90,7 @@ to_homogeneous(const Point<_dtype, _dimension> &point) {
 /** generate normal point from homogeneous one */
 template <typename _dtype, std::size_t _dimension>
 Point<_dtype, _dimension>
-from_homogeneous(const Point<_dtype, _dimension+1> &homo_point) {
+from_homogeneous(const Point<_dtype, _dimension + 1> &homo_point) {
     return homo_point.block<_dimension, 1>(0, 0) / homo_point[_dimension];
 }
 

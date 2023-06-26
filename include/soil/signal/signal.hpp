@@ -1,13 +1,13 @@
 #ifndef SOIL_SIGNAL_SIGNAL_HPP
 #define SOIL_SIGNAL_SIGNAL_HPP
 
+#include <any>
 #include <string>
 #include <vector>
-#include <any>
 
 #include "soil_export.h"
-#include "soil/signal/wavement.hpp"
 #include "soil/util/parameterized.hpp"
+#include "soil/signal/wavement.hpp"
 
 namespace soil {
 namespace signal {
@@ -37,13 +37,13 @@ namespace signal {
  *    implementation only concerns the value types.
  */
 class SOIL_EXPORT Signal : public util::Parameterized {
-  public:
+public:
     /** Get keys of all columns */
     virtual std::vector<std::string> Keys() const = 0;
     /** Generate a wavement according to given referee */
     virtual Wavement get(const Sequence &referee) const = 0;
 
-  protected:
+protected:
     /** Constructor with name assigning */
     explicit Signal(const std::string &name);
 };

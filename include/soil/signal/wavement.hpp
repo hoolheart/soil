@@ -1,12 +1,13 @@
 #ifndef SOIL_SIGNAL_WAVEMENT_HPP
 #define SOIL_SIGNAL_WAVEMENT_HPP
 
-#include <string>
-#include <vector>
-#include <unordered_map>
 #include <optional>
-#include "soil_export.h"
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "Eigen/Dense"
+#include "soil_export.h"
 
 namespace soil {
 namespace signal {

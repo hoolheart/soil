@@ -1,5 +1,5 @@
-#include "soil/signal/signal.hpp"
 #include "soil_export.h"
+#include "soil/signal/signal.hpp"
 
 namespace soil {
 namespace signal {
@@ -17,7 +17,7 @@ class FunctionalSignalPriv;
  * No valid parameter.
  */
 class SOIL_EXPORT FunctionalSignal : public Signal {
-  public:
+public:
     /** signal function */
     typedef std::function<double(double)> SIG_FUNC;
 
@@ -32,7 +32,7 @@ class SOIL_EXPORT FunctionalSignal : public Signal {
     std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
 
-  private:
+private:
     FunctionalSignalPriv *priv;
 };
 
@@ -43,7 +43,7 @@ class SOIL_EXPORT FunctionalSignal : public Signal {
  * - level, fixed level, type: double
  */
 class SOIL_EXPORT FixedSignal : public Signal {
-  public:
+public:
     /**
      * @brief Construct a new Fixed Signal object
      *
@@ -65,7 +65,7 @@ class SOIL_EXPORT FixedSignal : public Signal {
  * @note amp = coeff * referee + offset
  */
 class SOIL_EXPORT LinearSignal : public Signal {
-  public:
+public:
     /**
      * @brief Construct a new Linear Signal object
      *
@@ -80,7 +80,7 @@ class SOIL_EXPORT LinearSignal : public Signal {
 
 /** Abstract periodical signal with 'freq' parameter (unit: Hz) */
 class SOIL_EXPORT PeriodicalSignal : public Signal {
-  protected:
+protected:
     /**
      * @brief Construct a new Periodical Signal object
      *
@@ -101,7 +101,7 @@ class SOIL_EXPORT PeriodicalSignal : public Signal {
  * @note amp = A * sin(2.0 * pi * freq * referee + phase) + offset
  */
 class SOIL_EXPORT SineSignal : public PeriodicalSignal {
-  public:
+public:
     /**
      * @brief Construct a new Sine Signal object
      *
@@ -110,8 +110,8 @@ class SOIL_EXPORT SineSignal : public PeriodicalSignal {
      * @param [in] A default amplitude of AC part
      * @param [in] offset default DC offset
      */
-    explicit SineSignal(double freq = 50.0, double phase = 0.0,
-                        double A = 1.0, double offset = 0.0);
+    explicit SineSignal(double freq = 50.0, double phase = 0.0, double A = 1.0,
+                        double offset = 0.0);
 
     std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
@@ -130,7 +130,7 @@ class SOIL_EXPORT SineSignal : public PeriodicalSignal {
  *          - imag = A * sin(2.0 * pi * freq * referee + phase)
  */
 class SOIL_EXPORT ComplexSineSignal : public PeriodicalSignal {
-  public:
+public:
     /**
      * @brief Construct a new Complex Sine Signal object
      *
@@ -155,7 +155,7 @@ class SOIL_EXPORT ComplexSineSignal : public PeriodicalSignal {
  *       of implemented `checkParameter` method
  */
 class SOIL_EXPORT PulseSignal : public Signal {
-  protected:
+protected:
     /**
      * @brief Construct a new Pulse Signal object
      *
