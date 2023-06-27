@@ -30,15 +30,6 @@ public:
      *       axes don't match.
      */
     Spectrum(const Sequence &freq, const Characteristics &values);
-    /**
-     * @brief Construct a new Spectrum object
-     *
-     * @param [in] freq frequency axis
-     * @param [in] values value axis
-     *
-     * @note Throw runtime error if point count is less than 2 or sizes of two
-     *       axes don't match.
-     */
     Spectrum(Sequence &&freq, Characteristics &&values);
     /**
      * @brief Construct a new Spectrum object
@@ -50,6 +41,7 @@ public:
      * @note Throw runtime error if size of value axis is less than 2
      */
     Spectrum(double f0, double f_step, const Characteristics &values);
+    Spectrum(double f0, double f_step, Characteristics &&values);
 
     Size Count() const;                    /**< point count */
     const Sequence &Frenquencies() const;  /**< frequency axis */

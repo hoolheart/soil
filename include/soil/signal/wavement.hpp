@@ -34,6 +34,7 @@ public:
     explicit Wavement();
     /** Constructor with given referee */
     explicit Wavement(const Sequence &referee);
+    explicit Wavement(Sequence &&referee);
 
     /**
      * @brief Set referee of wavement, it would clear values as well
@@ -41,6 +42,7 @@ public:
      * @param [in] referee referee vector
      */
     void setReferee(const Sequence &referee);
+    void setReferee(Sequence &&referee);
     /**
      * @brief Add a specific value column
      *
@@ -48,6 +50,7 @@ public:
      * @param [in] values column vector
      */
     void setValues(const std::string &key, const Sequence &values);
+    void setValues(const std::string &key, Sequence &&values);
 
     /** Get count of point, a.k.a. size of referee or any column of values */
     Size PointCount() const;
@@ -55,7 +58,7 @@ public:
     Size ValueCount() const;
 
     /** Get referee vector */
-    Sequence Referee() const;
+    const Sequence &Referee() const;
     /** Get keys of all columns in values */
     std::vector<std::string> Keys() const;
     /**
@@ -64,7 +67,7 @@ public:
      * @param [in] key column key
      * @return column vector, empty vector if `key` non-exists
      */
-    Sequence Values(const std::string &key) const;
+    const Sequence &Values(const std::string &key) const;
 
     /** Information of a single point in wavement */
     struct Point {

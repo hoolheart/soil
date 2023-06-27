@@ -10,14 +10,19 @@ struct WavementPriv {
     std::unordered_map<std::string, Sequence> values;
 };
 
-Wavement::Wavement() { priv = new WavementPriv{}; }
+Wavement::Wavement() : priv(new WavementPriv{}) {}
 
-Wavement::Wavement(const Sequence &referee) {
-    priv =
-        new WavementPriv{referee, std::unordered_map<std::string, Sequence>()};
-}
+Wavement::Wavement(const Sequence &referee)
+    : priv(new WavementPriv{referee, {}}) {}
+
+Wavement::Wavement(Sequence &&referee) : priv(new WavementPriv{referee, {}}) {}
 
 void Wavement::setReferee(const Sequence &referee) {
+    priv->referee = referee;
+    priv->values.clear();
+}
+
+void Wavement::setReferee(Sequence &&referee) {
     priv->referee = referee;
     priv->values.clear();
 }
@@ -29,11 +34,18 @@ void Wavement::setValues(const std::string &key, const Sequence &values) {
     }
 }
 
+void Wavement::setValues(const std::string &key, Sequence &&values) {
+    if ((key.size() > 0) && (priv->values.find(key) == priv->values.end()) &&
+        (priv->referee.size() == values.size())) {
+        priv->values.insert({key, values});
+    }
+}
+
 Size Wavement::PointCount() const { return priv->referee.size(); }
 
 Size Wavement::ValueCount() const { return priv->values.size(); }
 
-Sequence Wavement::Referee() const { return priv->referee; }
+const Sequence &Wavement::Referee() const { return priv->referee; }
 
 std::vector<std::string> Wavement::Keys() const {
     std::vector<std::string> keys_;
@@ -44,7 +56,7 @@ std::vector<std::string> Wavement::Keys() const {
     return keys_;
 }
 
-Sequence Wavement::Values(const std::string &key) const {
+const Sequence &Wavement::Values(const std::string &key) const {
     auto it = priv->values.find(key);
     if (it != priv->values.end()) {
         return it->second;
