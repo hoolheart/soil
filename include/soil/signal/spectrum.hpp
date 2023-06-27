@@ -43,6 +43,19 @@ public:
     Spectrum(double f0, double f_step, const Characteristics &values);
     Spectrum(double f0, double f_step, Characteristics &&values);
 
+    /** Copy constructor */
+    Spectrum(const Spectrum &other);
+    /** Move constructor */
+    Spectrum(Spectrum &&other);
+
+    /** Destructor */
+    ~Spectrum();
+
+    /** Copy assignment */
+    Spectrum& operator =(const Spectrum &other);
+    /** Move assignment */
+    Spectrum& operator =(Spectrum &&other);
+
     Size Count() const;                    /**< point count */
     const Sequence &Frenquencies() const;  /**< frequency axis */
     const Characteristics &Values() const; /**< value axis */

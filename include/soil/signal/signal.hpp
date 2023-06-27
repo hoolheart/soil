@@ -73,6 +73,9 @@ public:
     explicit FunctionalSignal(
         const std::unordered_map<std::string, SIG_FUNC> &functions);
 
+    /** Destructor */
+    ~FunctionalSignal();
+
     std::vector<std::string> Keys() const;
     Wavement get(const Sequence &referee) const;
 

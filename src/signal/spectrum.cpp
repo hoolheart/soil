@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "soil/signal/spectrum.hpp"
+#include "../misc.hpp"
 
 namespace soil {
 namespace signal {
@@ -41,6 +42,26 @@ Spectrum::Spectrum(double f0, double f_step, Characteristics &&values) {
     }
     auto freq = Sequence::LinSpaced(n, f0, f0 + (n - 1) * f_step);
     priv = new SpectrumPriv{freq, values};
+}
+
+Spectrum::Spectrum(const Spectrum &other)
+    : priv(new SpectrumPriv{other.priv->freq, other.priv->values}) {}
+
+Spectrum::Spectrum(Spectrum &&other) : priv(other.priv) {
+    other.priv = nullptr;
+}
+
+Spectrum &Spectrum::operator=(const Spectrum &other) {
+    priv->freq = other.priv->freq;
+    priv->values = other.priv->values;
+    return *this;
+}
+
+Spectrum &Spectrum::operator=(Spectrum &&other) {
+    SAFE_DELETE(priv);
+    priv = other.priv;
+    other.priv = nullptr;
+    return *this;
 }
 
 Size Spectrum::Count() const { return priv->freq.size(); }

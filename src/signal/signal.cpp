@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "soil/signal/signal.hpp"
+#include "../misc.hpp"
 
 using namespace soil::util;
 
@@ -18,14 +19,15 @@ struct FunctionalSignalPriv {
 
 FunctionalSignal::FunctionalSignal(
     const std::unordered_map<std::string, SIG_FUNC> &functions)
-    : Signal("functional") {
-    priv = new FunctionalSignalPriv;
+    : Signal("functional"), priv(new FunctionalSignalPriv) {
     for (auto [key, func] : functions) {
         if (key.size() > 0) {
             priv->functions[key] = func;
         }
     }
 }
+
+FunctionalSignal::~FunctionalSignal() { SAFE_DELETE(priv); }
 
 std::vector<std::string> FunctionalSignal::Keys() const {
     std::vector<std::string> keys;
@@ -85,8 +87,7 @@ PeriodicalSignal::PeriodicalSignal(const std::string &name, double freq)
     prepareParameter("freq", freq);
 }
 
-SineSignal::SineSignal(double freq, double phase, double A,
-                       double offset)
+SineSignal::SineSignal(double freq, double phase, double A, double offset)
     : PeriodicalSignal("sine", freq) {
     prepareParameter("phase", phase);
     prepareParameter("A", A);
@@ -123,10 +124,10 @@ Wavement ComplexSineSignal::get(const Sequence &referee) const {
     double omega = 2.0 * M_PI * ParameterAs("freq", 50.0),
            phase = ParameterAs("phase", 0.0), A = ParameterAs("A", 1.0);
     Sequence real = referee, imag = referee;
-    for (double &value: real) {
+    for (double &value : real) {
         value = A * cos(omega * value + phase);
     }
-    for (double &value: imag) {
+    for (double &value : imag) {
         value = A * sin(omega * value + phase);
     }
     w.setValues("real", real);

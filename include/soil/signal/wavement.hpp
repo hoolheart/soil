@@ -31,10 +31,23 @@ class WavementPriv;
 class SOIL_EXPORT Wavement {
 public:
     /** Constructor with empty referee */
-    explicit Wavement();
+    Wavement();
     /** Constructor with given referee */
     explicit Wavement(const Sequence &referee);
     explicit Wavement(Sequence &&referee);
+
+    /** Copy constructor */
+    Wavement(const Wavement &other);
+    /** Move constructor */
+    Wavement(Wavement &&other);
+
+    /** Destructor */
+    ~Wavement();
+
+    /** Copy assignment */
+    Wavement& operator =(const Wavement &other);
+    /** Move assignment */
+    Wavement& operator =(Wavement &&other);
 
     /**
      * @brief Set referee of wavement, it would clear values as well

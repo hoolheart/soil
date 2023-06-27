@@ -33,6 +33,9 @@ class ParameterizedPriv;
  */
 class SOIL_EXPORT Parameterized {
 public:
+    /** Destructor*/
+    ~Parameterized();
+
     /** Get name */
     std::string Name() const;
 

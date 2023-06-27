@@ -1,6 +1,7 @@
 #include <unordered_map>
 
 #include "soil/signal/wavement.hpp"
+#include "../misc.hpp"
 
 namespace soil {
 namespace signal {
@@ -10,12 +11,34 @@ struct WavementPriv {
     std::unordered_map<std::string, Sequence> values;
 };
 
-Wavement::Wavement() : priv(new WavementPriv{}) {}
+Wavement::Wavement() : priv(new WavementPriv) {}
 
 Wavement::Wavement(const Sequence &referee)
     : priv(new WavementPriv{referee, {}}) {}
 
 Wavement::Wavement(Sequence &&referee) : priv(new WavementPriv{referee, {}}) {}
+
+Wavement::Wavement(const Wavement &other)
+    : priv(new WavementPriv{other.priv->referee, other.priv->values}) {}
+
+Wavement::Wavement(Wavement &&other) : priv(other.priv) {
+    other.priv = nullptr;
+}
+
+Wavement::~Wavement() { SAFE_DELETE(priv); }
+
+Wavement &Wavement::operator=(const Wavement &other) {
+    priv->referee = other.priv->referee;
+    priv->values = other.priv->values;
+    return *this;
+}
+
+Wavement &Wavement::operator=(Wavement &&other) {
+    SAFE_DELETE(priv);
+    priv = other.priv;
+    other.priv = nullptr;
+    return *this;
+}
 
 void Wavement::setReferee(const Sequence &referee) {
     priv->referee = referee;

@@ -1,6 +1,7 @@
 #include <unordered_map>
 
 #include "soil/util/parameterized.hpp"
+#include "../misc.hpp"
 
 namespace soil {
 namespace util {
@@ -10,10 +11,10 @@ struct ParameterizedPriv {
     std::unordered_map<std::string, std::any> parameters;
 };
 
-Parameterized::Parameterized(const std::string &name) {
-    priv = new ParameterizedPriv{name,
-                                 std::unordered_map<std::string, std::any>()};
-}
+Parameterized::Parameterized(const std::string &name)
+    : priv(new ParameterizedPriv{name, {}}) {}
+
+Parameterized::~Parameterized() { SAFE_DELETE(priv); }
 
 std::string Parameterized::Name() const { return priv->name; }
 
@@ -57,5 +58,5 @@ bool Parameterized::checkParameter(const std::string &_,
     return current.type() == next.type();
 }
 
-} //namespace util
-} //namespace soil
+} // namespace util
+} // namespace soil
