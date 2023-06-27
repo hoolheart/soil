@@ -51,6 +51,8 @@ Spectrum::Spectrum(Spectrum &&other) : priv(other.priv) {
     other.priv = nullptr;
 }
 
+Spectrum::~Spectrum() { SAFE_DELETE(priv); }
+
 Spectrum &Spectrum::operator=(const Spectrum &other) {
     priv->freq = other.priv->freq;
     priv->values = other.priv->values;
