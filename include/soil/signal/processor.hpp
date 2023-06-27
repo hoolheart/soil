@@ -42,6 +42,31 @@ public:
     Wavement via(const Wavement &w) const;
 };
 
+/**
+ * @brief Channel with linear transformation
+ *
+ * 3 additional parameters:
+ * - delay, shift on referee
+ * - coeff, coefficient on values
+ * - offset, offset on values
+ *
+ * After process, every referee becomes "referee + delay", every value
+ * becomes "value * coeff + offset"
+ */
+class SOIL_EXPORT LinearChannel : public Channel {
+public:
+    /**
+     * @brief Construct a new Linear Channel object
+     *
+     * @param [in] delay default referee delay
+     * @param [in] coeff default coefficient on values
+     * @param [in] offset default offset on values
+     */
+    explicit LinearChannel(double delay = 0.0, double coeff = 1.0,
+                           double offset = 0.0);
+    Wavement via(const Wavement &w) const;
+};
+
 } // namespace signal
 } // namespace soil
 
