@@ -4,12 +4,12 @@
 namespace soil {
 namespace signal {
 
-std::optional<Spectrum> fourierTranform(const Wavement &w) {
+std::optional<Spectrum> wavementToSpectrum(const Wavement &w) {
     //todo
     return std::nullopt;
 }
 
-std::optional<Wavement> inverseFourierTransform(const Spectrum &spec) {
+std::optional<Wavement> spectrumToWavement(const Spectrum &spec) {
     //todo
     return std::nullopt;
 }

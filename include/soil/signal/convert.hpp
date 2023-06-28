@@ -17,16 +17,16 @@ namespace signal {
  * Referee of input wavement must be monotonous sequence of time
  * with fixed sample rate.
  */
-std::optional<Spectrum> fourierTranform(const Wavement &w);
+std::optional<Spectrum> SOIL_EXPORT wavementToSpectrum(const Wavement &w);
 
 /**
  * @brief Inverse fourier transformation
  *
  * Convert frequency-domain spectrum to time-domain wavement.
- * Frequency axis of input spectrum must be monotonous sequence with
- * fixed interval.
+ * Frequency axis of input spectrum must be monotonous sequence
+ * with fixed interval.
  */
-std::optional<Wavement> inverseFourierTransform(const Spectrum &spec);
+std::optional<Wavement> SOIL_EXPORT spectrumToWavement(const Spectrum &spec);
 
 } // namespace signal
 } // namespace soil

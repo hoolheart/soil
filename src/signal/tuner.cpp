@@ -45,9 +45,9 @@ TunerChannel::TunerChannel(const Tuner_ptr &tuner)
 void TunerChannel::setTuner(const Tuner_ptr &tuner) { this->tuner = tuner; }
 
 Wavement TunerChannel::via(const Wavement &w) const {
-    auto spec = fourierTranform(w);
+    auto spec = wavementToSpectrum(w);
     if (tuner && spec.has_value()) {
-        auto tuned = inverseFourierTransform(tuner->tune(spec.value()));
+        auto tuned = spectrumToWavement(tuner->tune(spec.value()));
         if (tuned.has_value()) {
             return tuned.value();
         }
